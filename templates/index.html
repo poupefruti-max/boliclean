@@ -90,19 +90,40 @@
       </section>
 
       <!-- Balde Central -->
+      <!-- Balde Central Estilizado -->
       <section class="mixing-zone">
         <div class="slots">
-          <div class="slot">PRODUTO 1: <span id="slot-1-name">Vazio</span></div>
+          <div class="slot">
+            <span class="slot-label">PRODUTO 1</span>
+            <strong id="slot-1-name">Vazio</strong>
+          </div>
           <span class="plus">+</span>
-          <div class="slot">PRODUTO 2: <span id="slot-2-name">Vazio</span></div>
+          <div class="slot">
+            <span class="slot-label">PRODUTO 2</span>
+            <strong id="slot-2-name">Vazio</strong>
+          </div>
         </div>
 
-        <div class="bucket-container">
-          <div class="bucket-icon">🪣</div>
-          <p>BALDE DE MISTURA</p>
+        <div class="bucket-card" id="bucket-card">
+          <div class="bucket-glow"></div>
+          <div class="bucket-icon-wrapper">
+            <span class="bucket-icon">🪣</span>
+            <div class="bubbles">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+          <h3>BALDE DE MISTURA</h3>
+          <p class="hint">💡 Clique em 2 produtos nas prateleiras para testar a reação.</p>
         </div>
+      </section>
+      <div class="bucket-container">
+        <div class="bucket-icon">🪣</div>
+        <p>BALDE DE MISTURA</p>
+      </div>
 
-        <p class="hint">💡 Clique nos frascos para adicioná-los ao balde.</p>
+      <p class="hint">💡 Clique nos frascos para adicioná-los ao balde.</p>
       </section>
 
       <!-- Prateleira Direita: Específicos, Solventes e Químicos -->

@@ -174,3 +174,32 @@ async function enviarParaFlask() {
     });
   }
 }
+const bucketCard = document.getElementById("bucket-card");
+
+async function enviarParaFlask() {
+  try {
+    // Liga a animação de balanço no balde
+    if (bucketCard) bucketCard.classList.add("mixing");
+
+    const response = await fetch('/api/misturar', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        produto1: selectedProducts[0],
+        produto2: selectedProducts[1]
+      })
+    });
+
+    const data = await response.json();
+
+    // Desliga a animação após receber a resposta
+    if (bucketCard) bucketCard.classList.remove("mixing");
+
+    salvarNoLocalStorage(data);
+    mostrarModal(data);
+
+  } catch (error) {
+    if (bucketCard) bucketCard.classList.remove("mixing");
+    console.error("Erro ao enviar para o servidor Flask:", error);
+  }
+}

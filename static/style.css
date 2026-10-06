@@ -225,3 +225,18 @@ body {
 .badge.safe {
   background-color: var(--safe-bg);
 }
+.badge.pode {
+  background-color: #15803d; /* Verde */
+}
+
+.badge.cuidado {
+  background-color: #b45309; /* Amarelo/Laranja */
+}
+
+.badge.inibe {
+  background-color: #475569; /* Cinza */
+}
+
+.badge.nao_pode {
+  background-color: #991b1b; /* Vermelho */
+}

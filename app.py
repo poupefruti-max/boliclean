@@ -1,23 +1,6 @@
 from flask import Flask, render_template, request, jsonify
-import sqlite3
 
 app = Flask(__name__)
-DB_NAME = 'database.db'
-
-def init_db():
-    with sqlite3.connect(DB_NAME) as conn:
-        cursor = conn.cursor()
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS historico (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                produto1 TEXT NOT NULL,
-                produto2 TEXT NOT NULL,
-                status TEXT NOT NULL,
-                mensagem TEXT NOT NULL,
-                data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
-        ''')
-        conn.commit()
 
 # Mapeamento completo baseado no documento Alma Lavada
 REACOES = {
@@ -146,11 +129,7 @@ PRODUTOS_NOMES = {
 
 @app.route('/')
 def index():
-    with sqlite3.connect(DB_NAME) as conn:
-        cursor = conn.cursor()
-        cursor.execute('SELECT produto1, produto2, status, mensagem FROM historico ORDER BY id DESC')
-        historico_db = cursor.fetchall()
-    return render_template('index.html', historico=historico_db)
+    return render_template('index.html')
 
 @app.route('/api/misturar', methods=['POST'])
 def misturar():
@@ -163,7 +142,6 @@ def misturar():
 
     par = frozenset([p1, p2])
     
-    # Se a combinação não estiver explicitamente mapeada como PODE, CUIDADO ou INIBE, é NAO_PODE por padrão
     resultado = REACOES.get(par, {
         "status": "NAO_PODE",
         "mensagem": "Não pode misturar! Risco de reação química perigosa ou tóxica."
@@ -171,14 +149,6 @@ def misturar():
 
     nome_p1 = PRODUTOS_NOMES.get(p1, p1)
     nome_p2 = PRODUTOS_NOMES.get(p2, p2)
-
-    with sqlite3.connect(DB_NAME) as conn:
-        cursor = conn.cursor()
-        cursor.execute(
-            'INSERT INTO historico (produto1, produto2, status, mensagem) VALUES (?, ?, ?, ?)',
-            (nome_p1, nome_p2, resultado['status'], resultado['mensagem'])
-        )
-        conn.commit()
 
     return jsonify({
         "produto1": nome_p1,
@@ -188,5 +158,4 @@ def misturar():
     })
 
 if __name__ == '__main__':
-    init_db()
-    app.run(debug=True)
+    app.run(debug=True) 

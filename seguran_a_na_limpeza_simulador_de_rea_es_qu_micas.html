@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Segurança na Limpeza - Guia Interativo de Misturas Químicas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        wood: '#8B4513',
+                        shelf: '#3A271D',
+                        bucket: '#9CA3AF',
+                        hazard: '#EF4444',
+                        safe: '#10B981',
+                        warning: '#F59E0B'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1f2937;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4b5563;
+            border-radius: 4px;
+        }
+        
+        /* Shelf texture gradient */
+        .shelf-bg {
+            background: linear-gradient(180deg, #5c3818 0%, #3d230d 100%);
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.1), 0 8px 16px rgba(0,0,0,0.4);
+        }
+        .wall-bg {
+            background-color: #2b3038;
+            background-image: radial-gradient(#3a404a 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        /* Bucket Liquid Animation */
+        .liquid {
+            transition: all 0.5s ease-in-out;
+        }
+
+        /* Smoke effect animation */
+        @keyframes riseSmoke {
+            0% { transform: translateY(0) scale(0.8); opacity: 0.8; }
+            50% { transform: translateY(-40px) scale(1.3); opacity: 0.5; }
+            100% { transform: translateY(-80px) scale(1.8); opacity: 0; }
+        }
+        .smoke-particle {
+            position: absolute;
+            border-radius: 50%;
+            animation: riseSmoke 2.5s infinite ease-out;
+            pointer-events: none;
+        }
+
+        /* Bubble effect animation */
+        @keyframes floatBubble {
+            0% { transform: translateY(0) scale(0.5); opacity: 0.9; }
+            50% { opacity: 0.8; }
+            100% { transform: translateY(-70px) scale(1.2); opacity: 0; }
+        }
+        .bubble-particle {
+            position: absolute;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.7);
+            animation: floatBubble 2s infinite ease-out;
+            pointer-events: none;
+        }
+
+        .product-card {
+            touch-action: none;
+            user-select: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .product-card:hover {
+            transform: translateY(-4px) scale(1.03);
+        }
+        .product-card:active {
+            transform: scale(0.95);
+        }
+
+        /* Drag over effect for bucket */
+        .bucket-hover {
+            transform: scale(1.05);
+            filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.6));
+        }
+    </style>
+</head>
+<body class="wall-bg text-gray-100 min-h-screen flex flex-col justify-between font-sans overflow-x-hidden selection:bg-blue-600 selection:text-white">
+
+    <header class="bg-gray-900/90 backdrop-blur-md border-b border-gray-800 sticky top-0 z-40 px-4 py-3 shadow-lg">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-blue-600 p-2.5 rounded-xl shadow-md text-white">
+                    <i class="fa-solid fa-flask-vial text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+                        Segurança Química na Limpeza
+                        <span class="text-xs font-normal bg-blue-900/80 text-blue-200 px-2 py-0.5 rounded-full border border-blue-700">Projeto Académico</span>
+                    </h1>
+                    <p class="text-xs text-gray-400">Guia interativo para profissionais de limpeza e higienização</p>
+                </div>
+            </div>
+
+            <!-- Header Action Buttons -->
+            <div class="flex items-center gap-2 flex-wrap">
+                <button onclick="switchTab('simulation')" id="tab-btn-sim" class="px-4 py-2 text-sm font-semibold rounded-lg transition-all flex items-center gap-2 bg-blue-600 text-white shadow-md">
+                    <i class="fa-solid fa-bucket"></i>
+                    Simulador do Almoxarifado
+                </button>
+                <button onclick="switchTab('guide')" id="tab-btn-guide" class="px-4 py-2 text-sm font-semibold rounded-lg transition-all flex items-center gap-2 bg-gray-800 text-gray-300 hover:bg-gray-700">
+                    <i class="fa-solid fa-book-skull"></i>
+                    Tabela de Perigos
+                </button>
+                <button onclick="switchTab('python')" id="tab-btn-py" class="px-4 py-2 text-sm font-semibold rounded-lg transition-all flex items-center gap-2 bg-emerald-700 hover:bg-emerald-600 text-white shadow-md">
+                    <i class="fa-brands fa-python text-lg"></i>
+                    Código Python (Streamlit/Flask)
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto w-full p-4 flex-grow flex flex-col">
+
+        <!-- TAB 1: SIMULATION VIEW -->
+        <div id="tab-simulation" class="flex flex-col gap-6">
+            
+            <!-- Information Bar & Instructions -->
+            <div class="bg-gray-800/80 border border-gray-700 rounded-xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 text-sm shadow-md">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-circle-info text-blue-400 text-xl"></i>
+                    <div>
+                        <span class="font-bold text-white">Como Usar:</span>
+                        <span class="text-gray-300"> Arraste <span class="text-blue-400 font-semibold">2 produtos de limpeza</span> para o balde central (ou clique neles) para testar a reação química e aprender sobre os riscos.</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4 text-xs font-semibold">
+                    <span class="bg-gray-900 px-3 py-1.5 rounded-lg border border-gray-700">
+                        Testes Realizados: <span id="mix-count" class="text-blue-400 font-bold">0</span>
+                    </span>
+                    <button onclick="clearBucket()" class="bg-red-950/80 hover:bg-red-900 border border-red-700/60 text-red-200 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5">
+                        <i class="fa-solid fa-rotate-left"></i> Limpar Balde
+                    </button>
+                </div>
+            </div>
+
+            <!-- Main Warehouse Grid (Left Shelf | Central Bucket | Right Shelf) -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+                
+                <!-- LEFT SHELF -->
+                <div class="lg:col-span-3 flex flex-col gap-4">
+                    <div class="bg-gray-900/90 border border-amber-900/50 rounded-2xl p-4 flex flex-col justify-between h-full shadow-2xl relative overflow-hidden">
+                        <div class="flex items-center justify-between border-b border-amber-900/40 pb-2 mb-2">
+                            <h3 class="font-bold text-amber-200 text-sm flex items-center gap-2">
+                                <i class="fa-solid fa-boxes-stacked"></i> Prateleira Esquerda
+                            </h3>
+                            <span class="text-xs text-amber-500/80">Desinfetantes e Clorados</span>
+                        </div>
+
+                        <!-- Shelf Row 1 -->
+                        <div class="space-y-3">
+                            <p class="text-[11px] font-semibold uppercase tracking-wider text-amber-400/70">Nível Superior</p>
+                            <div class="grid grid-cols-2 gap-3" id="shelf-left-top">
+                                <!-- Product Items dynamically/statically added -->
+                            </div>
+                            <div class="shelf-bg h-3 rounded-md w-full"></div>
+                        </div>
+
+                        <!-- Shelf Row 2 -->
+                        <div class="space-y-3 mt-4">
+                            <p class="text-[11px] font-semibold uppercase tracking-wider text-amber-400/70">Nível Inferior</p>
+                            <div class="grid grid-cols-2 gap-3" id="shelf-left-bottom">
+                                <!-- Product Items -->
+                            </div>
+                            <div class="shelf-bg h-3 rounded-md w-full"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CENTER BUCKET & EXPERIMENT ZONE -->
+                <div class="lg:col-span-6 flex flex-col justify-between items-center bg-gray-900/60 border border-gray-800 rounded-2xl p-6 relative min-h-[480px] shadow-2xl overflow-hidden">
+                    
+                    <!-- Selected Items Indicators -->
+                    <div class="w-full flex items-center justify-between gap-3 z-10">
+                        <div class="flex-1 bg-gray-800/90 border border-gray-700 rounded-xl p-3 flex items-center gap-3">
+                            <span class="text-xs text-gray-400 font-bold">PRODUTO 1:</span>
+                            <div id="slot-1" class="flex-1 text-sm font-semibold text-gray-300 italic">Vazio</div>
+                        </div>
+                        <div class="text-gray-500 font-black text-xl">+</div>
+                        <div class="flex-1 bg-gray-800/90 border border-gray-700 rounded-xl p-3 flex items-center gap-3">
+                            <span class="text-xs text-gray-400 font-bold">PRODUTO 2:</span>
+                            <div id="slot-2" class="flex-1 text-sm font-semibold text-gray-300 italic">Vazio</div>
+                        </div>
+                    </div>
+
+                    <!-- Chemical Reaction Visual Area / Smoke & Bubbles container -->
+                    <div class="relative w-full flex-grow flex items-center justify-center my-4" id="reaction-container">
+                        
+                        <!-- Reaction Result Overlay Card -->
+                        <div id="reaction-card" class="hidden absolute top-2 inset-x-2 z-30 bg-gray-900/95 border rounded-2xl p-4 shadow-2xl backdrop-blur-md transition-all duration-300">
+                            <div class="flex items-start justify-between gap-3 mb-2">
+                                <div class="flex items-center gap-2.5">
+                                    <span id="reaction-icon" class="text-2xl"></span>
+                                    <div>
+                                        <h4 id="reaction-title" class="font-extrabold text-lg leading-tight"></h4>
+                                        <p id="reaction-subtitle" class="text-xs text-gray-400 font-mono"></p>
+                                    </div>
+                                </div>
+                                <button onclick="clearBucket()" class="text-gray-400 hover:text-white p-1">
+                                    <i class="fa-solid fa-xmark text-lg"></i>
+                                </button>
+                            </div>
+                            <p id="reaction-desc" class="text-xs text-gray-300 leading-relaxed my-2"></p>
+                            <div id="reaction-risks" class="mt-2 pt-2 border-t border-gray-800 text-xs flex items-center gap-2"></div>
+                        </div>
+
+                        <!-- Metallic Bucket Representation -->
+                        <div id="bucket" 
+                             ondragover="handleDragOver(event)" 
+                             ondragleave="handleDragLeave(event)" 
+                             ondrop="handleDrop(event)"
+                             class="relative w-64 h-64 flex flex-col justify-end items-center transition-all duration-300 cursor-pointer group">
+                            
+                            <!-- Bucket Metal Handle -->
+                            <div class="absolute -top-12 w-48 h-24 border-4 border-gray-400 rounded-t-full pointer-events-none group-hover:border-gray-300 transition-colors"></div>
+                            
+                            <!-- Outer Rim -->
+                            <div class="w-60 h-8 bg-gradient-to-r from-gray-400 via-gray-200 to-gray-500 rounded-t-full border-b border-gray-600 shadow-md relative z-10">
+                                <!-- Opening depth -->
+                                <div class="absolute inset-1 bg-gray-800 rounded-t-full overflow-hidden flex items-end justify-center">
+                                    <!-- Liquid inside bucket -->
+                                    <div id="liquid" class="liquid w-full h-0 bg-blue-500/40 relative"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Bucket Body -->
+                            <div class="w-52 h-44 bg-gradient-to-r from-gray-500 via-gray-300 to-gray-600 rounded-b-3xl border-x-2 border-b-4 border-gray-700 shadow-2xl relative flex items-center justify-center overflow-hidden">
+                                <div class="absolute inset-0 bg-gradient-to-b from-transparent via-white/10 to-black/20"></div>
+                                <!-- Bucket Label/Icon -->
+                                <div class="text-center z-10 opacity-60 group-hover:opacity-100 transition-opacity">
+                                    <i class="fa-solid fa-droplet text-gray-700 text-3xl mb-1 block"></i>
+                                    <span class="text-[10px] font-bold text-gray-800 uppercase tracking-widest">Balde de Mistura</span>
+                                </div>
+                            </div>
+
+                            <!-- Particles Container (Smoke/Bubbles) -->
+                            <div id="particles-container" class="absolute bottom-32 inset-x-0 h-40 pointer-events-none z-20 flex justify-center"></div>
+                        </div>
+                    </div>
+
+                    <!-- Instructional Footer Tag -->
+                    <div class="text-center text-xs text-gray-400">
+                        <i class="fa-solid fa-hand-pointer text-blue-400 mr-1"></i>
+                        Dica: Pode também clicar em qualquer frasco para adicioná-lo automaticamente ao balde.
+                    </div>
+                </div>
+
+                <!-- RIGHT SHELF -->
+                <div class="lg:col-span-3 flex flex-col gap-4">
+                    <div class="bg-gray-900/90 border border-amber-900/50 rounded-2xl p-4 flex flex-col justify-between h-full shadow-2xl relative overflow-hidden">
+                        <div class="flex items-center justify-between border-b border-amber-900/40 pb-2 mb-2">
+                            <h3 class="font-bold text-amber-200 text-sm flex items-center gap-2">
+                                <i class="fa-solid fa-boxes-stacked"></i> Prateleira Direita
+                            </h3>
+                            <span class="text-xs text-amber-500/80">Ácidos, Solventes e Água</span>
+                        </div>
+
+                        <!-- Shelf Row 1 -->
+                        <div class="space-y-3">
+                            <p class="text-[11px] font-semibold uppercase tracking-wider text-amber-400/70">Nível Superior</p>
+                            <div class="grid grid-cols-2 gap-3" id="shelf-right-top">
+                                <!-- Product Items -->
+                            </div>
+                            <div class="shelf-bg h-3 rounded-md w-full"></div>
+                        </div>
+
+                        <!-- Shelf Row 2 -->
+                        <div class="space-y-3 mt-4">
+                            <p class="text-[11px] font-semibold uppercase tracking-wider text-amber-400/70">Nível Inferior</p>
+                            <div class="grid grid-cols-2 gap-3" id="shelf-right-bottom">
+                                <!-- Product Items -->
+                            </div>
+                            <div class="shelf-bg h-3 rounded-md w-full"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Experiment History Log Section -->
+            <div class="bg-gray-900/80 border border-gray-800 rounded-2xl p-5 shadow-xl">
+                <h3 class="text-md font-bold text-white mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-clock-rotate-left text-blue-400"></i>
+                    Histórico de Experiências Realizadas
+                </h3>
+                <div id="history-log" class="space-y-2 max-h-48 overflow-y-auto pr-2 text-xs">
+                    <p id="empty-history" class="text-gray-500 italic text-center py-4">Nenhuma mistura foi efetuada ainda neste ciclo.</p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- TAB 2: REFERENCE GUIDE VIEW -->
+        <div id="tab-guide" class="hidden flex-col gap-6">
+            <div class="bg-gray-900/90 border border-gray-800 rounded-2xl p-6 shadow-xl">
+                <div class="flex items-center gap-3 mb-6 border-b border-gray-800 pb-4">
+                    <div class="bg-red-500/20 text-red-400 p-3 rounded-xl border border-red-500/30">
+                        <i class="fa-solid fa-triangle-exclamation text-2xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-white">Guia Rápido de Combinações Químicas Perigosas</h2>
+                        <p class="text-sm text-gray-400">Consulte os riscos biológicos e respiratórios associados à mistura indevida de produtos de limpeza domésticos e industriais.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="guide-cards-container">
+                    <!-- Cards will be dynamically loaded from chemical database -->
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: PYTHON CODE VIEW (Streamlit & Flask) -->
+        <div id="tab-python" class="hidden flex-col gap-6">
+            <div class="bg-gray-900/90 border border-gray-800 rounded-2xl p-6 shadow-xl">
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6 border-b border-gray-800 pb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-emerald-500/20 text-emerald-400 p-3 rounded-xl border border-emerald-500/30">
+                            <i class="fa-brands fa-python text-3xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-bold text-white">Código Fonte Python para o Projeto Académico</h2>
+                            <p class="text-sm text-gray-400">Escolha abaixo o código-fonte em Python (Streamlit ou Flask) para apresentar na universidade.</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="togglePythonFramework('streamlit')" id="btn-fw-streamlit" class="px-4 py-2 text-xs font-bold rounded-lg bg-emerald-600 text-white shadow-md">
+                            Streamlit (Recomendado)
+                        </button>
+                        <button onclick="togglePythonFramework('flask')" id="btn-fw-flask" class="px-4 py-2 text-xs font-bold rounded-lg bg-gray-800 text-gray-300 hover:bg-gray-700">
+                            Flask + API Web
+                        </button>
+                    </div>
+                </div>
+
+                <!-- STREAMLIT CODE DISPLAY -->
+                <div id="python-streamlit-block" class="space-y-3">
+                    <div class="flex items-center justify-between bg-gray-950 px-4 py-2 rounded-t-xl border border-gray-800 text-xs">
+                        <span class="font-mono text-emerald-400"><i class="fa-regular fa-file-code mr-1"></i> app_streamlit.py</span>
+                        <button onclick="copyCode('code-streamlit')" class="text-gray-400 hover:text-white flex items-center gap-1">
+                            <i class="fa-regular fa-copy"></i> Copiar Código
+                        </button>
+                    </div>
+                    <pre class="bg-gray-950 p-4 rounded-b-xl border-x border-b border-gray-800 font-mono text-xs text-gray-300 overflow-x-auto leading-relaxed"><code id="code-streamlit"># ==============================================================================
+# PROJETO ACADÉMICO: SEGURANÇA NA MISTURA DE PRODUTOS DE LIMPEZA (STREAMLIT)
+# Autores: Grupo de Trabalho Universitário
+# Requisitos: pip install streamlit
+# Execução: streamlit run app_streamlit.py
+# ==============================================================================
+
+import streamlit as st
+
+# Configuração da página Web
+st.set_page_config(
+    page_title="Segurança Química na Limpeza",
+    page_icon="🧪",
+    layout="wide"
+)
+
+# Base de Dados das Reações Químicas entre Produtos
+REACOES_QUIMICAS = {
+    frozenset(["agua_sanitaria", "alcool"]): {
+        "status": "PERIGO",
+        "titulo": "⚠️ ALERTA TÓXICO: Formação de Clorofórmio",
+        "subtitulo": "Mistura Altamente Perigosa",
+        "descricao": "A reacção entre o hipoclorito de sódio (água sanitária/lixívia) e o álcool gera clorofórmio e acetocloreto. Pode causar perda de consciência e danos hepáticos.",
+        "riscos": ["Intoxicação grave", "Queimadura das vias respiratórias", "Danos ao sistema nervoso"]
+    },
+    frozenset(["agua_sanitaria", "limpa_vidros"]): {
+        "status": "PERIGO",
+        "titulo": "⚠️ ALERTA TÓXICO: Libertação de Cloraminas",
+        "subtitulo": "Nuvem Tóxica Pulmonar",
+        "descricao": "A combinação de amónia (presente no limpa-vidros) com lixívia produz gases tóxicos chamados cloraminas. Causa edema pulmonar e sufocamento.",
+        "riscos": ["Dificuldade respiratória aguda", "Irritação ocular severa", "Risco de pneumonia química"]
+    },
+    frozenset(["agua_sanitaria", "vinagre"]): {
+        "status": "PERIGO",
+        "titulo": "⚠️ ALERTA TÓXICO: Libertação de Gás Cloro (Cl2)",
+        "subtitulo": "Gás Corrosivo Extremamente Perigoso",
+        "descricao": "O ácido acético do vinagre reage com o hipoclorito libertando gás cloro puro. Utilizado historicamente como agente químico sufocante.",
+        "riscos": ["Destruição de mucosa nasal/pulmonar", "Queimaduras químicas", "Riscos vitais"]
+    },
+    frozenset(["agua_sanitaria", "desinfetante"]): {
+        "status": "AVISO",
+        "titulo": "⚠️ MISTURA INEFICAZ / RISCO MODERADO",
+        "subtitulo": "Neutralização de Ativos & Reacção Indesejada",
+        "descricao": "Muitos desinfetantes contêm amónio quaternário ou fragrâncias orgânicas que reagem com a lixívia, neutralizando a desinfecção e libertando vapores irritantes.",
+        "riscos": ["Perda da capacidade de desinfecção", "Vapores irritantes"]
+    },
+    frozenset(["vinagre", "bicarbonato"]): {
+        "status": "NEUTRO",
+        "titulo": "⚠️ MISTURA INEFICAZ (Efeito Nulo)",
+        "subtitulo": "Anulação Química Dinâmica",
+        "descricao": "O vinagre (ácido) e o bicarbonato (base) reagem libertando dióxido de carbono e água. Embora produza espuma, anulam o poder de limpeza um do outro.",
+        "riscos": ["Perda de eficiência no trabalho de limpeza"]
+    },
+    frozenset(["agua_sanitaria", "agua"]): {
+        "status": "SEGURO",
+        "titulo": "✅ MISTURA SEGURA E RECOMENDADA",
+        "subtitulo": "Diluição Correta para Desinfecção",
+        "descricao": "A água pura dilui a concentração do hipoclorito de sódio para proporções seguras de higienização de superfícies e pisos.",
+        "riscos": ["Utilização recomendada pelos fabricantes"]
+    },
+    frozenset(["desinfetante", "agua"]): {
+        "status": "SEGURO",
+        "titulo": "✅ MISTURA SEGURA (Uso Padrão)",
+        "subtitulo": "Diluição de Limpeza Diária",
+        "descricao": "Procedimento padrão e correto para limpeza e perfumação de ambientes.",
+        "riscos": ["Seguro para o operador"]
+    }
+}
+
+PRODUTOS = {
+    "agua_sanitaria": "🌊 Água Sanitária / Lixívia",
+    "alcool": "🧪 Álcool 70%",
+    "limpa_vidros": "🪟 Limpa-Vidros (Amónia)",
+    "vinagre": "🥗 Vinagre (Ácido Acético)",
+    "desinfetante": "🌺 Desinfetante Perfumado",
+    "bicarbonato": "⚪ Bicarbonato de Sódio",
+    "agua": "🚰 Água Limpa (Torneira)"
+}
+
+st.title("🛡️ Simulador de Segurança Química na Limpeza")
+st.markdown("### Ferramenta Educativa para Formação de Profissionais")
+
+col1, col2 = st.columns(2)
+
+with col1:
+    prod1 = st.selectbox("Selecione o Primeiro Produto:", options=list(PRODUTOS.keys()), format_func=lambda x: PRODUTOS[x])
+
+with col2:
+    prod2 = st.selectbox("Selecione o Segundo Produto:", options=list(PRODUTOS.keys()), format_func=lambda x: PRODUTOS[x])
+
+if st.button("🧪 Simular Mistura no Balde", type="primary", use_container_width=True):
+    if prod1 == prod2:
+        st.info("Selecionou o mesmo produto duas vezes. Não há reação cruzada.")
+    else:
+        chave = frozenset([prod1, prod2])
+        resultado = REACOES_QUIMICAS.get(chave)
+        
+        if resultado:
+            if resultado["status"] == "PERIGO":
+                st.error(f"{resultado['titulo']}\n\n**{resultado['subtitulo']}**")
+            elif resultado["status"] == "AVISO":
+                st.warning(f"{resultado['titulo']}\n\n**{resultado['subtitulo']}**")
+            else:
+                st.success(f"{resultado['titulo']}\n\n**{resultado['subtitulo']}**")
+                
+            st.write(resultado["descricao"])
+            st.markdown("**Principais Riscos e Impactos:**")
+            for risco in resultado["riscos"]:
+                st.markdown(f"- ⚠️ {risco}")
+        else:
+            st.info("ℹ️ Esta mistura específica não possui alertas críticos conhecidos, mas recomenda-se evitar misturar produtos sem orientação do fabricante.")
+</code></pre>
+                </div>
+
+                <!-- FLASK CODE DISPLAY -->
+                <div id="python-flask-block" class="hidden space-y-3">
+                    <div class="flex items-center justify-between bg-gray-950 px-4 py-2 rounded-t-xl border border-gray-800 text-xs">
+                        <span class="font-mono text-emerald-400"><i class="fa-regular fa-file-code mr-1"></i> app_flask.py</span>
+                        <button onclick="copyCode('code-flask')" class="text-gray-400 hover:text-white flex items-center gap-1">
+                            <i class="fa-regular fa-copy"></i> Copiar Código
+                        </button>
+                    </div>
+                    <pre class="bg-gray-950 p-4 rounded-b-xl border-x border-b border-gray-800 font-mono text-xs text-gray-300 overflow-x-auto leading-relaxed"><code id="code-flask"># ==============================================================================
+# PROJETO ACADÉMICO: API BACKEND EM FLASK PARA MISTURAS QUÍMICAS
+# Requisitos: pip install flask flask-cors
+# Execução: python app_flask.py
+# ==============================================================================
+
+from flask import Flask, jsonify, request
+
+app = Flask(__name__)
+
+# Base de Dados
+DATABASE_REACOES = [
+    {
+        "itens": ["agua_sanitaria", "alcool"],
+        "status": "PERIGO",
+        "titulo": "Formação de Clorofórmio Tóxico",
+        "descricao": "Risco de desmaio, irritação pulmonar severa e danos hepáticos."
+    },
+    {
+        "itens": ["agua_sanitaria", "limpa_vidros"],
+        "status": "PERIGO",
+        "titulo": "Libertação de Cloraminas",
+        "descricao": "Gás irritante que causa queimaduras nas vias aéreas e asfixia."
+    },
+    {
+        "itens": ["agua_sanitaria", "vinagre"],
+        "status": "PERIGO",
+        "titulo": "Gás Cloro Corrosivo",
+        "descricao": "Gás altamente corrosivo e potencialmente letal em recintos fechados."
+    }
+]
+
+@app.route('/api/avaliar-mistura', methods=['POST'])
+def avaliar_mistura():
+    data = request.get_json()
+    p1 = data.get('produto1')
+    p2 = data.get('produto2')
+    
+    req_set = set([p1, p2])
+    
+    for reacao in DATABASE_REACOES:
+        if set(reacao["itens"]) == req_set:
+            return jsonify({"sucesso": True, "resultado": reacao}), 200
+            
+    return jsonify({
+        "sucesso": True, 
+        "resultado": {
+            "status": "SEGURO_OU_DESCONHECIDO",
+            "titulo": "Sem Reação Perigosa Detetada",
+            "descricao": "Mistura sem incompatibilidade crítica registada."
+        }
+    }), 200
+
+if __name__ == '__main__':
+    print("🚀 Servidor Flask de Segurança Química a rodar em http://localhost:5000")
+    app.run(debug=True, port=5000)
+</code></pre>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="bg-gray-900 border-t border-gray-800 text-center text-xs text-gray-500 py-4 px-4">
+        <p>Projeto de Extensão Universitária &copy; 2026 - Segurança e Saúde do Trabalho em Serviços de Limpeza</p>
+    </footer>
+
+    <script>
+        // --- CHEMICAL DATABASE ---
+        const PRODUCTS = {
+            'lixivia': { id: 'lixivia', name: 'Água Sanitária / Lixívia', icon: 'fa-bottle-droplet', color: 'bg-blue-600', border: 'border-blue-400', category: 'Clorado' },
+            'alcool': { id: 'alcool', name: 'Álcool 70%', icon: 'fa-fire-flame-simple', color: 'bg-sky-500', border: 'border-sky-300', category: 'Solvente' },
+            'limpa_vidros': { id: 'limpa_vidros', name: 'Limpa Vidros (Amónia)', icon: 'fa-spray-can', color: 'bg-cyan-600', border: 'border-cyan-400', category: 'Alcalino' },
+            'vinagre': { id: 'vinagre', name: 'Vinagre (Ácido Acético)', icon: 'fa-wine-bottle', color: 'bg-amber-700', border: 'border-amber-500', category: 'Ácido' },
+            'desinfetante': { id: 'desinfetante', name: 'Desinfetante Perfumado', icon: 'fa-pump-soap', color: 'bg-purple-600', border: 'border-purple-400', category: 'Geral' },
+            'amaciador': { id: 'amaciador', name: 'Amaciador de Roupa', icon: 'fa-shirt', color: 'bg-indigo-600', border: 'border-indigo-400', category: 'Catiónico' },
+            'multiusos': { id: 'multiusos', name: 'Detergente Multiusos', icon: 'fa-hand-sparkles', color: 'bg-emerald-600', border: 'border-emerald-400', category: 'Aniónico' },
+            'agua': { id: 'agua', name: 'Água Limpa (Torneira)', icon: 'fa-faucet-drip', color: 'bg-teal-500', border: 'border-teal-300', category: 'Neutro' }
+        };
+
+        const SHELF_LAYOUT = {
+            'left-top': ['lixivia', 'desinfetante'],
+            'left-bottom': ['amaciador', 'multiusos'],
+            'right-top': ['alcool', 'limpa_vidros'],
+            'right-bottom': ['vinagre', 'agua']
+        };
+
+        const REACTIONS = [
+            {
+                pair: ['lixivia', 'alcool'],
+                type: 'hazard',
+                title: '⚠️ PERIGO EXTREMO: Clorofórmio & Ácido Clorídrico',
+                subtitle: 'Vapores Tóxicos e Anestésicos',
+                desc: 'A mistura de hipoclorito de sódio com álcool produz clorofórmio e fosgénio. Estes vapores causam tonturas imediatas, danos hepáticos graves e paragem respiratória.',
+                riscos: ['Danos ao Sistema Nervoso', "Desmaio / Perda de Consciência", "Lesões Hepáticas e Pulmonares"]
+            },
+            {
+                pair: ['lixivia', 'limpa_vidros'],
+                type: 'hazard',
+                title: '⚠️ PERIGO EXTREMO: Gás Cloramina',
+                subtitle: 'Reacção Com Amónia',
+                desc: 'A combinação de Lixívia com produtos à base de Amónia (como o Limpa Vidros) forma vapores de cloramina extremamente voláteis e altamente tóxicos.',
+                riscos: ['Queimaduras Químicas nos Pulmões', 'Edema Pulmonar Rápido', 'Irritação Ocular Severa']
+            },
+            {
+                pair: ['lixivia', 'vinagre'],
+                type: 'hazard',
+                title: '⚠️ PERIGO LETAL: Gás Cloro Puro (Cl2)',
+                subtitle: 'Libertação de Gás Corrosivo',
+                desc: 'O ácido acético do vinagre baixa o pH da lixívia, provocando uma libertação massiva de gás cloro. Um dos gases tóxicos mais perigosos para as vias respiratórias.',
+                riscos: ['Sufocamento e Asfixia', 'Destruição dos Tecidos Nasais', 'Risco de Vida']
+            },
+            {
+                pair: ['lixivia', 'desinfetante'],
+                type: 'warning',
+                title: '⚠️ MISTURA INCOMPATÍVEL / INEFICAZ',
+                subtitle: 'Anulação e Libertação Irritante',
+                desc: 'O hipoclorito destrói os princípios ativos de fragrâncias e compostos do desinfetante, anulando a capacidade de desinfecção e libertando vapores incómodos.',
+                riscos: ['Inutilização dos Produtos', 'Desperdício de Recursos', 'Irritação Leve nas Vias Aéreas']
+            },
+            {
+                pair: ['vinagre', 'multiusos'],
+                type: 'warning',
+                title: '⚠️ MISTURA INEFICAZ',
+                subtitle: 'Neutralização Ácido-Base',
+                desc: 'O ácido do vinagre neutraliza os detergentes alcalinos/multiusos, transformando a mistura em água salgada e gordura, retirando a capacidade de limpeza.',
+                riscos: ['Perda Total da Eficiência de Limpeza']
+            },
+            {
+                pair: ['amaciador', 'multiusos'],
+                type: 'warning',
+                title: '⚠️ ANULAÇÃO DE DETERGENTES',
+                subtitle: 'Incompatibilidade de Surfactantes',
+                desc: 'Misturar agentes aniónicos (detergente) com catiónicos (amaciador) faz com que se aglutinem e percam o poder de lavagem e amaciamento.',
+                riscos: ['Formação de Resíduos Pastosos', 'Nenhum efeito de limpeza']
+            },
+            {
+                pair: ['lixivia', 'agua'],
+                type: 'safe',
+                title: '✅ MISTURA SEGURA E RECOMENDADA',
+                subtitle: 'Diluição Correta de Higienização',
+                desc: 'A água é o meio adequado para diluir a lixívia na proporção correta recomendada pelas autoridades de saúde para desinfetar pavimentos e superfícies.',
+                riscos: ['Uso Profissional Adequado', 'Higienização Eficiente']
+            },
+            {
+                pair: ['desinfetante', 'agua'],
+                type: 'safe',
+                title: '✅ MISTURA SEGURA',
+                subtitle: 'Uso Padrão do Fabricante',
+                desc: 'Diluição correta do desinfetante concentrado para limpeza regular de solos e sanitários.',
+                riscos: ['Seguro para o Utilizador']
+            },
+            {
+                pair: ['multiusos', 'agua'],
+                type: 'safe',
+                title: '✅ MISTURA SEGURA',
+                subtitle: 'Aplicação Padrão',
+                desc: 'Combinação recomendada para limpeza diária de superfícies.',
+                riscos: ['Sem Riscos Químicos']
+            }
+        ];
+
+        // --- STATE MANAGEMENT ---
+        let selectedProducts = [];
+        let totalMixesCount = 0;
+
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderShelves();
+            renderGuideCards();
+        });
+
+        function renderShelves() {
+            Object.keys(SHELF_LAYOUT).forEach(shelfId => {
+                const container = document.getElementById(`shelf-${shelfId}`);
+                if (!container) return;
+                
+                container.innerHTML = '';
+                SHELF_LAYOUT[shelfId].forEach(prodKey => {
+                    const prod = PRODUCTS[prodKey];
+                    const card = document.createElement('div');
+                    card.className = `product-card bg-gray-800/90 border ${prod.border} rounded-xl p-2.5 flex flex-col items-center justify-center text-center cursor-pointer shadow-lg hover:border-white transition-all`;
+                    card.draggable = true;
+                    card.setAttribute('data-id', prod.id);
+                    
+                    card.innerHTML = `
+                        <div class="${prod.color} text-white p-2 rounded-lg mb-1.5 shadow-sm">
+                            <i class="fa-solid ${prod.icon} text-lg"></i>
+                        </div>
+                        <span class="text-[11px] font-bold text-gray-200 leading-tight">${prod.name}</span>
+                        <span class="text-[9px] text-gray-400 mt-0.5 font-mono">${prod.category}</span>
+                    `;
+
+                    // Drag Events
+                    card.addEventListener('dragstart', (e) => {
+                        e.dataTransfer.setData('text/plain', prod.id);
+                        card.classList.add('opacity-50');
+                    });
+                    card.addEventListener('dragend', () => {
+                        card.classList.remove('opacity-50');
+                    });
+
+                    // Click Event
+                    card.addEventListener('click', () => {
+                        addProductToBucket(prod.id);
+                    });
+
+                    container.appendChild(card);
+                });
+            });
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            document.getElementById('bucket').classList.add('bucket-hover');
+        }
+
+        function handleDragLeave(e) {
+            document.getElementById('bucket').classList.remove('bucket-hover');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            document.getElementById('bucket').classList.remove('bucket-hover');
+            const productId = e.dataTransfer.getData('text/plain');
+            if (productId && PRODUCTS[productId]) {
+                addProductToBucket(productId);
+            }
+        }
+
+        function addProductToBucket(productId) {
+            if (selectedProducts.length >= 2) {
+                return; // Bucket is full
+            }
+
+            selectedProducts.push(productId);
+            updateSlotUI();
+
+            if (selectedProducts.length === 2) {
+                evaluateReaction();
+            }
+        }
+
+        function updateSlotUI() {
+            const slot1 = document.getElementById('slot-1');
+            const slot2 = document.getElementById('slot-2');
+            const liquid = document.getElementById('liquid');
+
+            if (selectedProducts[0]) {
+                const p1 = PRODUCTS[selectedProducts[0]];
+                slot1.innerHTML = `<span class="text-blue-400 flex items-center gap-1.5"><i class="fa-solid ${p1.icon}"></i> ${p1.name}</span>`;
+                liquid.style.height = '40%';
+            } else {
+                slot1.innerHTML = `<span class="italic text-gray-500">Vazio</span>`;
+                liquid.style.height = '0%';
+            }
+
+            if (selectedProducts[1]) {
+                const p2 = PRODUCTS[selectedProducts[1]];
+                slot2.innerHTML = `<span class="text-blue-400 flex items-center gap-1.5"><i class="fa-solid ${p2.icon}"></i> ${p2.name}</span>`;
+                liquid.style.height = '85%';
+            } else {
+                slot2.innerHTML = `<span class="italic text-gray-500">Vazio</span>`;
+            }
+        }
+
+        function evaluateReaction() {
+            totalMixesCount++;
+            document.getElementById('mix-count').innerText = totalMixesCount;
+
+            const [p1, p2] = selectedProducts;
+            
+            // Search for defined reaction match
+            let reaction = REACTIONS.find(r => 
+                (r.pair[0] === p1 && r.pair[1] === p2) || (r.pair[0] === p2 && r.pair[1] === p1)
+            );
+
+            if (!reaction) {
+                // Default generic non-hazardous or unknown reaction
+                reaction = {
+                    type: 'warning',
+                    title: '⚠️ MISTURA NÃO RECOMENDADA',
+                    subtitle: 'Sem Dados de Compatibilidade Direta',
+                    desc: 'Embora não haja registo de uma reacção violenta imediata entre estes dois componentes, a regra fundamental de segurança de higienização proíbe a mistura arbitrária de detergentes.',
+                    riscos: ['Risco de anulação química', 'Possível libertação de odores desagradáveis']
+                };
+            }
+
+            displayReactionUI(reaction);
+            logHistory(p1, p2, reaction);
+        }
+
+        function displayReactionUI(reaction) {
+            const card = document.getElementById('reaction-card');
+            const icon = document.getElementById('reaction-icon');
+            const title = document.getElementById('reaction-title');
+            const subtitle = document.getElementById('reaction-subtitle');
+            const desc = document.getElementById('reaction-desc');
+            const risks = document.getElementById('reaction-risks');
+            const liquid = document.getElementById('liquid');
+
+            card.classList.remove('hidden');
+
+            if (reaction.type === 'hazard') {
+                card.className = "absolute top-2 inset-x-2 z-30 bg-red-950/95 border border-red-600 rounded-2xl p-4 shadow-2xl backdrop-blur-md";
+                icon.innerHTML = `<i class="fa-solid fa-biohazard text-red-500"></i>`;
+                title.className = "font-extrabold text-lg leading-tight text-red-200";
+                liquid.className = "liquid w-full bg-emerald-600/70"; // Toxic green chemical liquid
+                triggerSmokeEffect('emerald');
+            } else if (reaction.type === 'warning') {
+                card.className = "absolute top-2 inset-x-2 z-30 bg-amber-950/95 border border-amber-600 rounded-2xl p-4 shadow-2xl backdrop-blur-md";
+                icon.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-amber-500"></i>`;
+                title.className = "font-extrabold text-lg leading-tight text-amber-200";
+                liquid.className = "liquid w-full bg-amber-600/60";
+                triggerSmokeEffect('amber');
+            } else { // Safe
+                card.className = "absolute top-2 inset-x-2 z-30 bg-emerald-950/95 border border-emerald-600 rounded-2xl p-4 shadow-2xl backdrop-blur-md";
+                icon.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400"></i>`;
+                title.className = "font-extrabold text-lg leading-tight text-emerald-200";
+                liquid.className = "liquid w-full bg-blue-500/60";
+                triggerBubbleEffect();
+            }
+
+            title.innerText = reaction.title;
+            subtitle.innerText = reaction.subtitle;
+            desc.innerText = reaction.desc;
+
+            risks.innerHTML = reaction.riscos.map(r => `
+                <span class="bg-black/40 px-2 py-1 rounded text-[11px] font-semibold border border-white/10 text-gray-200">
+                    <i class="fa-solid fa-shield-cat text-amber-400 mr-1"></i> ${r}
+                </span>
+            `).join('');
+        }
+
+        function triggerSmokeEffect(colorClass) {
+            const container = document.getElementById('particles-container');
+            container.innerHTML = '';
+
+            for (let i = 0; i < 15; i++) {
+                setTimeout(() => {
+                    const smoke = document.createElement('div');
+                    const size = Math.random() * 30 + 20;
+                    smoke.className = 'smoke-particle';
+                    smoke.style.width = `${size}px`;
+                    smoke.style.height = `${size}px`;
+                    smoke.style.left = `${Math.random() * 80 + 10}%`;
+                    smoke.style.backgroundColor = colorClass === 'emerald' ? 'rgba(16, 185, 129, 0.4)' : 'rgba(245, 158, 11, 0.3)';
+                    smoke.style.filter = 'blur(8px)';
+                    container.appendChild(smoke);
+
+                    setTimeout(() => smoke.remove(), 2500);
+                }, i * 150);
+            }
+        }
+
+        function triggerBubbleEffect() {
+            const container = document.getElementById('particles-container');
+            container.innerHTML = '';
+
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    const bubble = document.createElement('div');
+                    const size = Math.random() * 18 + 8;
+                    bubble.className = 'bubble-particle';
+                    bubble.style.width = `${size}px`;
+                    bubble.style.height = `${size}px`;
+                    bubble.style.left = `${Math.random() * 80 + 10}%`;
+                    bubble.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
+                    container.appendChild(bubble);
+
+                    setTimeout(() => bubble.remove(), 2000);
+                }, i * 100);
+            }
+        }
+
+        function clearBucket() {
+            selectedProducts = [];
+            updateSlotUI();
+            document.getElementById('reaction-card').classList.add('hidden');
+            document.getElementById('particles-container').innerHTML = '';
+            document.getElementById('liquid').className = "liquid w-full h-0 bg-blue-500/40";
+        }
+
+        function logHistory(p1Key, p2Key, reaction) {
+            const p1 = PRODUCTS[p1Key];
+            const p2 = PRODUCTS[p2Key];
+            const logContainer = document.getElementById('history-log');
+            const emptyMsg = document.getElementById('empty-history');
+            
+            if (emptyMsg) emptyMsg.remove();
+
+            const badgeColor = reaction.type === 'hazard' ? 'bg-red-900/60 text-red-300 border-red-700' :
+                               reaction.type === 'warning' ? 'bg-amber-900/60 text-amber-300 border-amber-700' :
+                               'bg-emerald-900/60 text-emerald-300 border-emerald-700';
+
+            const entry = document.createElement('div');
+            entry.className = `p-2.5 rounded-xl bg-gray-800/90 border border-gray-700 flex items-center justify-between gap-3`;
+            entry.innerHTML = `
+                <div class="flex items-center gap-2">
+                    <span class="font-bold text-gray-200">${p1.name}</span>
+                    <span class="text-gray-500">+</span>
+                    <span class="font-bold text-gray-200">${p2.name}</span>
+                </div>
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold border ${badgeColor}">
+                    ${reaction.type.toUpperCase()}
+                </span>
+            `;
+
+            logContainer.prepend(entry);
+        }
+
+        function renderGuideCards() {
+            const container = document.getElementById('guide-cards-container');
+            container.innerHTML = '';
+
+            REACTIONS.forEach(r => {
+                const p1 = PRODUCTS[r.pair[0]];
+                const p2 = PRODUCTS[r.pair[1]];
+
+                const card = document.createElement('div');
+                card.className = "bg-gray-800/80 border border-gray-700 rounded-xl p-4 flex flex-col justify-between";
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <h4 class="font-bold text-sm text-white">${p1.name} + ${p2.name}</h4>
+                            <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded ${r.type === 'hazard' ? 'bg-red-900 text-red-200' : r.type === 'warning' ? 'bg-amber-900 text-amber-200' : 'bg-emerald-900 text-emerald-200'}">
+                                ${r.type}
+                            </span>
+                        </div>
+                        <p class="text-xs font-semibold text-gray-300 mb-1">${r.title}</p>
+                        <p class="text-xs text-gray-400 leading-relaxed">${r.desc}</p>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function switchTab(tabName) {
+            document.getElementById('tab-simulation').classList.add('hidden');
+            document.getElementById('tab-guide').classList.add('hidden');
+            document.getElementById('tab-python').classList.add('hidden');
+
+            document.getElementById('tab-btn-sim').className = "px-4 py-2 text-sm font-semibold rounded-lg transition-all flex items-center gap-2 bg-gray-800 text-gray-300 hover:bg-gray-700";
+            document.getElementById('tab-btn-guide').className = "px-4 py-2 text-sm font-semibold rounded-lg transition-all flex items-center gap-2 bg-gray-800 text-gray-300 hover:bg-gray-700";
+            document.getElementById('tab-btn-py').className = "px-4 py-2 text-sm font-semibold rounded-lg transition-all flex items-center gap-2 bg-gray-800 text-gray-300 hover:bg-gray-700";
+
+            if (tabName === 'simulation') {
+                document.getElementById('tab-simulation').classList.remove('hidden');
+                document.getElementById('tab-btn-sim').className = "px-4 py-2 text-sm font-semibold rounded-lg transition-all flex items-center gap-2 bg-blue-600 text-white shadow-md";
+            } else if (tabName === 'guide') {
+                document.getElementById('tab-guide').classList.remove('hidden');
+                document.getElementById('tab-btn-guide').className = "px-4 py-2 text-sm font-semibold rounded-lg transition-all flex items-center gap-2 bg-blue-600 text-white shadow-md";
+            } else if (tabName === 'python') {
+                document.getElementById('tab-python').classList.remove('hidden');
+                document.getElementById('tab-btn-py').className = "px-4 py-2 text-sm font-semibold rounded-lg transition-all flex items-center gap-2 bg-emerald-700 text-white shadow-md";
+            }
+        }
+
+        function togglePythonFramework(fw) {
+            const stBlock = document.getElementById('python-streamlit-block');
+            const flBlock = document.getElementById('python-flask-block');
+            const stBtn = document.getElementById('btn-fw-streamlit');
+            const flBtn = document.getElementById('btn-fw-flask');
+
+            if (fw === 'streamlit') {
+                stBlock.classList.remove('hidden');
+                flBlock.classList.add('hidden');
+                stBtn.className = "px-4 py-2 text-xs font-bold rounded-lg bg-emerald-600 text-white shadow-md";
+                flBtn.className = "px-4 py-2 text-xs font-bold rounded-lg bg-gray-800 text-gray-300 hover:bg-gray-700";
+            } else {
+                stBlock.classList.add('hidden');
+                flBlock.classList.remove('hidden');
+                stBtn.className = "px-4 py-2 text-xs font-bold rounded-lg bg-gray-800 text-gray-300 hover:bg-gray-700";
+                flBtn.className = "px-4 py-2 text-xs font-bold rounded-lg bg-emerald-600 text-white shadow-md";
+            }
+        }
+
+        function copyCode(elementId) {
+            const text = document.getElementById(elementId).innerText;
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            
+            alert('Código copiado para a área de transferência!');
+        }
+    </script>
+</body>
+</html>

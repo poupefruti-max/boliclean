@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Simulador de Misturas - Alma Lavada</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="app-container">
+    
+    <header class="top-bar">
+      <div class="instructions">
+        <strong>Como Usar:</strong> Clique em 2 produtos para testar a reação química segundo as regras do Alma Lavada.
+      </div>
+      <div class="actions">
+        <button id="reset-btn" class="btn-reset">↺ Limpar Balde</button>
+      </div>
+    </header>
+
+    <main class="workbench">
+      <!-- Prateleira Esquerda: Lavagem, Roupas e Desinfetantes -->
+      <section class="shelf">
+        <h2>Prateleira Esquerda <span>Lavagem & Sanitização</span></h2>
+        
+        <div class="shelf-group">
+          <h3>SABÕES E DETERGENTES</h3>
+          <div class="card-grid">
+            <button class="product-card" data-id="detergente">
+              <span class="icon">🧼</span>
+              <strong>Detergente</strong>
+            </button>
+            <button class="product-card" data-id="sabao_po">
+              <span class="icon">🧺</span>
+              <strong>Sabão em Pó</strong>
+            </button>
+            <button class="product-card" data-id="sabao_liquido">
+              <span class="icon">🧴</span>
+              <strong>Sabão Líquido</strong>
+            </button>
+            <button class="product-card" data-id="sabao_barra">
+              <span class="icon">🧼</span>
+              <strong>Sabão em Barra</strong>
+            </button>
+            <button class="product-card" data-id="pasta_panela">
+              <span class="icon">🧽</span>
+              <strong>Pasta de Panela</strong>
+            </button>
+            <button class="product-card" data-id="amaciante">
+              <span class="icon">👕</span>
+              <strong>Amaciante</strong>
+            </button>
+          </div>
+        </div>
+
+        <div class="shelf-group">
+          <h3>CLORADOS E DESINFETANTES</h3>
+          <div class="card-grid">
+            <button class="product-card" data-id="cloro">
+              <span class="icon">🧪</span>
+              <strong>Cloro</strong>
+            </button>
+            <button class="product-card" data-id="cloro_gel">
+              <span class="icon">🧴</span>
+              <strong>Cloro em Gel</strong>
+            </button>
+            <button class="product-card" data-id="agua_sanitaria">
+              <span class="icon">🧴</span>
+              <strong>Água Sanitária</strong>
+            </button>
+            <button class="product-card" data-id="desinfetante">
+              <span class="icon">🌿</span>
+              <strong>Desinfetante</strong>
+            </button>
+            <button class="product-card" data-id="lysoform">
+              <span class="icon">🛡️️</span>
+              <strong>Lysoform</strong>
+            </button>
+            <button class="product-card" data-id="agua_oxigenada">
+              <span class="icon">🫧</span>
+              <strong>Água Oxigenada</strong>
+            </button>
+            <button class="product-card" data-id="inseticida">
+              <span class="icon">🪰</span>
+              <strong>Inseticida Doméstico</strong>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Balde Central -->
+      <section class="mixing-zone">
+        <div class="slots">
+          <div class="slot">PRODUTO 1: <span id="slot-1-name">Vazio</span></div>
+          <span class="plus">+</span>
+          <div class="slot">PRODUTO 2: <span id="slot-2-name">Vazio</span></div>
+        </div>
+
+        <div class="bucket-container">
+          <div class="bucket-icon">🪣</div>
+          <p>BALDE DE MISTURA</p>
+        </div>
+
+        <p class="hint">💡 Clique nos frascos para adicioná-los ao balde.</p>
+      </section>
+
+      <!-- Prateleira Direita: Específicos, Solventes e Químicos -->
+      <section class="shelf">
+        <h2>Prateleira Direita <span>Específicos & Solventes</span></h2>
+        
+        <div class="shelf-group">
+          <h3>LIMPEZA ESPECÍFICA</h3>
+          <div class="card-grid">
+            <button class="product-card" data-id="multiuso">
+              <span class="icon">✨</span>
+              <strong>Multiuso</strong>
+            </button>
+            <button class="product-card" data-id="desengordurante">
+              <span class="icon">🍳</span>
+              <strong>Desengordurante</strong>
+            </button>
+            <button class="product-card" data-id="limpa_vidro">
+              <span class="icon">🪟</span>
+              <strong>Limpa Vidro</strong>
+            </button>
+            <button class="product-card" data-id="lustra_moveis">
+              <span class="icon">🪑</span>
+              <strong>Lustra Móveis</strong>
+            </button>
+            <button class="product-card" data-id="cera_piso">
+              <span class="icon">✨</span>
+              <strong>Cera de Piso</strong>
+            </button>
+          </div>
+        </div>
+
+        <div class="shelf-group">
+          <h3>SOLVENTES E REAGENTES QUÍMICOS</h3>
+          <div class="card-grid">
+            <button class="product-card" data-id="agua">
+              <span class="icon">💧</span>
+              <strong>Água</strong>
+            </button>
+            <button class="product-card" data-id="bicarbonato">
+              <span class="icon">🧂</span>
+              <strong>Bicarbonato de Sódio</strong>
+            </button>
+            <button class="product-card" data-id="vinagre">
+              <span class="icon">🍶</span>
+              <strong>Vinagre</strong>
+            </button>
+            <button class="product-card" data-id="alcool">
+              <span class="icon">🔥</span>
+              <strong>Álcool</strong>
+            </button>
+            <button class="product-card" data-id="amonia">
+              <span class="icon">⚠️</span>
+              <strong>Amônia</strong>
+            </button>
+            <button class="product-card" data-id="soda_caustica">
+              <span class="icon">⚠️</span>
+              <strong>Soda Cáustica</strong>
+            </button>
+            <button class="product-card" data-id="removedor">
+              <span class="icon">🧹</span>
+              <strong>Removedor</strong>
+            </button>
+            <button class="product-card" data-id="solupan">
+              <span class="icon">🟣</span>
+              <strong>Solupan (Roxinho)</strong>
+            </button>
+            <button class="product-card" data-id="desengraxante">
+              <span class="icon">⚙️</span>
+              <strong>Desengraxante</strong>
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Histórico renderizado pelo Flask -->
+    <footer class="history-section">
+      <h2>📜 Histórico de Experiências Realizadas</h2>
+      <ul id="history-list" class="history-list">
+        {% for item in historico %}
+          <li class="history-item">
+            <span><strong>{{ item[0] }}</strong> + <strong>{{ item[1] }}</strong> — <em>{{ item[3] }}</em></span>
+            <span class="badge {{ item[2]|lower }}">{{ item[2] }}</span>
+          </li>
+        {% endfor %}
+      </ul>
+    </footer>
+
+  </div>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

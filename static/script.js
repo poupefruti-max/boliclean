@@ -26,6 +26,11 @@ function updateSlots() {
   slot2El.textContent = selectedProducts[1] || "Vazio";
 }
 
+function limparBalde() {
+  selectedProducts = [];
+  updateSlots();
+}
+
 // Envia a requisição POST para a API do Flask
 async function enviarParaFlask() {
   try {
@@ -42,7 +47,7 @@ async function enviarParaFlask() {
 
     const data = await response.json();
 
-    // Adiciona o resultado retornado pelo Flask no histórico
+    // Adiciona o resultado retornado pelo Flask no topo do histórico
     const li = document.createElement("li");
     li.className = "history-item";
     li.innerHTML = `
@@ -51,12 +56,20 @@ async function enviarParaFlask() {
     `;
 
     historyListEl.prepend(li);
+
+    // Exibe o aviso ao usuário com o resultado da mistura
+    setTimeout(() => {
+      alert(`[RESULTADO: ${data.status}]\n${data.produto1} + ${data.produto2}\n\n${data.mensagem}`);
+      
+      // Limpa o balde imediatamente após fechar o aviso
+      limparBalde();
+    }, 100);
+
   } catch (error) {
     console.error("Erro ao enviar para o servidor Flask:", error);
+    alert("Ocorreu um erro ao processar a mistura.");
+    limparBalde();
   }
 }
 
-resetBtn.addEventListener("click", () => {
-  selectedProducts = [];
-  updateSlots();
-});
+resetBtn.addEventListener("click", limparBalde);

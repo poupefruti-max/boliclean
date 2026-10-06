@@ -240,3 +240,108 @@ body {
 .badge.nao_pode {
   background-color: #991b1b; /* Vermelho */
 }
+
+/* --- Modal de Aviso Bonitinho --- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.modal-overlay.hidden {
+  display: none;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.modal-box {
+  background: #ffffff;
+  width: 90%;
+  max-width: 400px;
+  border-radius: 16px;
+  padding: 24px;
+  text-align: center;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popIn {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.modal-icon {
+  font-size: 3rem;
+  margin-bottom: 8px;
+}
+
+.modal-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  margin-bottom: 4px;
+  letter-spacing: 0.5px;
+}
+
+.modal-products {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #4b5563;
+  margin-bottom: 12px;
+}
+
+.modal-message {
+  font-size: 0.9rem;
+  color: #374151;
+  line-height: 1.4;
+  margin-bottom: 20px;
+  background: #f9fafb;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #f3f4f6;
+}
+
+.btn-modal {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background-color: #2563eb;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-modal:hover {
+  background-color: #1d4ed8;
+}
+
+/* Cores por tipo de resultado */
+.modal-box.pode { border-top: 6px solid #16a34a; }
+.modal-box.pode .modal-title { color: #16a34a; }
+
+.modal-box.cuidado { border-top: 6px solid #d97706; }
+.modal-box.cuidado .modal-title { color: #d97706; }
+
+.modal-box.inibe { border-top: 6px solid #64748b; }
+.modal-box.inibe .modal-title { color: #64748b; }
+
+.modal-box.nao_pode { border-top: 6px solid #dc2626; }
+.modal-box.nao_pode .modal-title { color: #dc2626; }

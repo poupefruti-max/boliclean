@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <title>Simulador de Misturas - Alma Lavada</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body>
   <div class="app-container">
-    
+
     <header class="top-bar">
       <div class="instructions">
         <strong>Como Usar:</strong> Clique em 2 produtos para testar a reação química segundo as regras do Alma Lavada.
@@ -21,7 +23,7 @@
       <!-- Prateleira Esquerda: Lavagem, Roupas e Desinfetantes -->
       <section class="shelf">
         <h2>Prateleira Esquerda <span>Lavagem & Sanitização</span></h2>
-        
+
         <div class="shelf-group">
           <h3>SABÕES E DETERGENTES</h3>
           <div class="card-grid">
@@ -106,7 +108,7 @@
       <!-- Prateleira Direita: Específicos, Solventes e Químicos -->
       <section class="shelf">
         <h2>Prateleira Direita <span>Específicos & Solventes</span></h2>
-        
+
         <div class="shelf-group">
           <h3>LIMPEZA ESPECÍFICA</h3>
           <div class="card-grid">
@@ -175,6 +177,16 @@
           </div>
         </div>
       </section>
+      <!-- Modal de Aviso Personalizado -->
+      <div id="custom-modal" class="modal-overlay hidden">
+        <div class="modal-box">
+          <div id="modal-icon" class="modal-icon">🧪</div>
+          <h3 id="modal-status" class="modal-title">STATUS</h3>
+          <p id="modal-products" class="modal-products">Produto A + Produto B</p>
+          <p id="modal-message" class="modal-message">Mensagem do resultado aqui...</p>
+          <button id="modal-close-btn" class="btn-modal">Entendido</button>
+        </div>
+      </div>
     </main>
 
     <!-- Histórico renderizado pelo Flask -->
@@ -182,10 +194,10 @@
       <h2>📜 Histórico de Experiências Realizadas</h2>
       <ul id="history-list" class="history-list">
         {% for item in historico %}
-          <li class="history-item">
-            <span><strong>{{ item[0] }}</strong> + <strong>{{ item[1] }}</strong> — <em>{{ item[3] }}</em></span>
-            <span class="badge {{ item[2]|lower }}">{{ item[2] }}</span>
-          </li>
+        <li class="history-item">
+          <span><strong>{{ item[0] }}</strong> + <strong>{{ item[1] }}</strong> — <em>{{ item[3] }}</em></span>
+          <span class="badge {{ item[2]|lower }}">{{ item[2] }}</span>
+        </li>
         {% endfor %}
       </ul>
     </footer>
@@ -193,5 +205,9 @@
   </div>
 
   <script src="{{ url_for('static', filename='script.js') }}"></script>
+
+
 </body>
+
+
 </html>

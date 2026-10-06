@@ -115,10 +115,10 @@ const modalCloseBtn = document.getElementById("modal-close-btn");
 
 // Mapeamento de ícones por status
 const STATUS_ICONS = {
-  PODE: "✅",
-  CUIDADO: "⚠️",
-  INIBE: "🔄",
-  NAO_PODE: "🚫"
+  PODE: '<i class="fa-solid fa-circle-check" style="color: #16a34a;"></i>',
+  CUIDADO: '<i class="fa-solid fa-triangle-exclamation" style="color: #d97706;"></i>',
+  INIBE: '<i class="fa-solid fa-rotate-right" style="color: #64748b;"></i>',
+  NAO_PODE: '<i class="fa-solid fa-circle-xmark" style="color: #dc2626;"></i>'
 };
 
 // Exibe o modal formatado
@@ -128,7 +128,7 @@ function mostrarModal(data) {
   // Limpa classes anteriores e adiciona a nova do status
   modalBox.className = "modal-box " + data.status.toLowerCase();
   
-  modalIcon.textContent = STATUS_ICONS[statusKey] || "🧪";
+  modalIcon.innerHTML = STATUS_ICONS[statusKey] || '<i class="fa-solid fa-vial"></i>';
   modalStatus.textContent = data.status.replace("_", " ");
   modalProducts.textContent = `${data.produto1} + ${data.produto2}`;
   modalMessage.textContent = data.mensagem;

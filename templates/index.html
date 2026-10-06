@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <title>Simulador de Misturas - Alma Lavada</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
@@ -15,7 +16,7 @@
         <strong>Como Usar:</strong> Clique em 2 produtos para testar a reação química segundo as regras do Alma Lavada.
       </div>
       <div class="actions">
-        <button id="reset-btn" class="btn-reset">↺ Limpar Balde</button>
+        <button id="reset-btn" class="btn-reset">        <i class="fa-solid fa-rotate-left"></i> Limpar Balde</button>
       </div>
     </header>
 
@@ -28,27 +29,27 @@
           <h3>SABÕES E DETERGENTES</h3>
           <div class="card-grid">
             <button class="product-card" data-id="detergente">
-              <span class="icon">🧼</span>
+              <i class="fa-solid fa-soap icon"></i>
               <strong>Detergente</strong>
             </button>
             <button class="product-card" data-id="sabao_po">
-              <span class="icon">🧺</span>
+              <i class="fa-solid fa-cube icon"></i>
               <strong>Sabão em Pó</strong>
             </button>
             <button class="product-card" data-id="sabao_liquido">
-              <span class="icon">🧴</span>
+              <i class="fa-solid fa-bottle-droplet icon"></i>
               <strong>Sabão Líquido</strong>
             </button>
             <button class="product-card" data-id="sabao_barra">
-              <span class="icon">🧼</span>
+              <i class="fa-solid fa-soap icon"></i>
               <strong>Sabão em Barra</strong>
             </button>
             <button class="product-card" data-id="pasta_panela">
-              <span class="icon">🧽</span>
+              <i class="fa-solid fa-sponge icon"></i>
               <strong>Pasta de Panela</strong>
             </button>
             <button class="product-card" data-id="amaciante">
-              <span class="icon">👕</span>
+              <i class="fa-solid fa-tshirt icon"></i>
               <strong>Amaciante</strong>
             </button>
           </div>
@@ -58,31 +59,31 @@
           <h3>CLORADOS E DESINFETANTES</h3>
           <div class="card-grid">
             <button class="product-card" data-id="cloro">
-              <span class="icon">🧪</span>
+              <i class="fa-solid fa-vial icon"></i>
               <strong>Cloro</strong>
             </button>
             <button class="product-card" data-id="cloro_gel">
-              <span class="icon">🧴</span>
+              <i class="fa-solid fa-bottle-droplet icon"></i>
               <strong>Cloro em Gel</strong>
             </button>
             <button class="product-card" data-id="agua_sanitaria">
-              <span class="icon">🧴</span>
+              <i class="fa-solid fa-bottle-droplet icon"></i>
               <strong>Água Sanitária</strong>
             </button>
             <button class="product-card" data-id="desinfetante">
-              <span class="icon">🌿</span>
+              <i class="fa-solid fa-spray-can icon"></i>
               <strong>Desinfetante</strong>
             </button>
             <button class="product-card" data-id="lysoform">
-              <span class="icon">🛡️️</span>
+              <i class="fa-solid fa-shield-check icon"></i>
               <strong>Lysoform</strong>
             </button>
             <button class="product-card" data-id="agua_oxigenada">
-              <span class="icon">🫧</span>
+              <i class="fa-solid fa-bubble-chart icon"></i>
               <strong>Água Oxigenada</strong>
             </button>
             <button class="product-card" data-id="inseticida">
-              <span class="icon">🪰</span>
+              <i class="fa-solid fa-bug icon"></i>
               <strong>Inseticida Doméstico</strong>
             </button>
           </div>
@@ -107,7 +108,7 @@
         <div class="bucket-card" id="bucket-card">
           <div class="bucket-glow"></div>
           <div class="bucket-icon-wrapper">
-            <span class="bucket-icon">🪣</span>
+            <i class="fa-solid fa-bucket bucket-icon"></i>
             <div class="bubbles">
               <span></span>
               <span></span>
@@ -115,15 +116,8 @@
             </div>
           </div>
           <h3>BALDE DE MISTURA</h3>
-          <p class="hint">💡 Clique em 2 produtos nas prateleiras para testar a reação.</p>
+          <p class="hint"><i class="fa-solid fa-lightbulb mr-1"></i> Clique em 2 produtos nas prateleiras para testar a reação.</p>
         </div>
-      </section>
-      <div class="bucket-container">
-        <div class="bucket-icon">🪣</div>
-        <p>BALDE DE MISTURA</p>
-      </div>
-
-      <p class="hint">💡 Clique nos frascos para adicioná-los ao balde.</p>
       </section>
 
       <!-- Prateleira Direita: Específicos, Solventes e Químicos -->
@@ -134,23 +128,23 @@
           <h3>LIMPEZA ESPECÍFICA</h3>
           <div class="card-grid">
             <button class="product-card" data-id="multiuso">
-              <span class="icon">✨</span>
+              <i class="fa-solid fa-sparkles icon"></i>
               <strong>Multiuso</strong>
             </button>
             <button class="product-card" data-id="desengordurante">
-              <span class="icon">🍳</span>
+              <i class="fa-solid fa-pan-food icon"></i>
               <strong>Desengordurante</strong>
             </button>
             <button class="product-card" data-id="limpa_vidro">
-              <span class="icon">🪟</span>
+              <i class="fa-solid fa-window-maximize icon"></i>
               <strong>Limpa Vidro</strong>
             </button>
             <button class="product-card" data-id="lustra_moveis">
-              <span class="icon">🪑</span>
+              <i class="fa-solid fa-chair icon"></i>
               <strong>Lustra Móveis</strong>
             </button>
             <button class="product-card" data-id="cera_piso">
-              <span class="icon">✨</span>
+              <i class="fa-solid fa-sparkles icon"></i>
               <strong>Cera de Piso</strong>
             </button>
           </div>
@@ -160,39 +154,39 @@
           <h3>SOLVENTES E REAGENTES QUÍMICOS</h3>
           <div class="card-grid">
             <button class="product-card" data-id="agua">
-              <span class="icon">💧</span>
+              <i class="fa-solid fa-droplet icon"></i>
               <strong>Água</strong>
             </button>
             <button class="product-card" data-id="bicarbonato">
-              <span class="icon">🧂</span>
+              <i class="fa-solid fa-cube icon"></i>
               <strong>Bicarbonato de Sódio</strong>
             </button>
             <button class="product-card" data-id="vinagre">
-              <span class="icon">🍶</span>
+              <i class="fa-solid fa-wine-bottle icon"></i>
               <strong>Vinagre</strong>
             </button>
             <button class="product-card" data-id="alcool">
-              <span class="icon">🔥</span>
+              <i class="fa-solid fa-fire icon"></i>
               <strong>Álcool</strong>
             </button>
             <button class="product-card" data-id="amonia">
-              <span class="icon">⚠️</span>
+              <i class="fa-solid fa-triangle-exclamation icon"></i>
               <strong>Amônia</strong>
             </button>
             <button class="product-card" data-id="soda_caustica">
-              <span class="icon">⚠️</span>
+              <i class="fa-solid fa-triangle-exclamation icon"></i>
               <strong>Soda Cáustica</strong>
             </button>
             <button class="product-card" data-id="removedor">
-              <span class="icon">🧹</span>
+              <i class="fa-solid fa-broom icon"></i>
               <strong>Removedor</strong>
             </button>
             <button class="product-card" data-id="solupan">
-              <span class="icon">🟣</span>
+              <i class="fa-solid fa-circle icon" style="color: #8b5cf6;"></i>
               <strong>Solupan (Roxinho)</strong>
             </button>
             <button class="product-card" data-id="desengraxante">
-              <span class="icon">⚙️</span>
+              <i class="fa-solid fa-cog icon"></i>
               <strong>Desengraxante</strong>
             </button>
           </div>
@@ -201,7 +195,7 @@
       <!-- Modal de Aviso Personalizado -->
       <div id="custom-modal" class="modal-overlay hidden">
         <div class="modal-box">
-          <div id="modal-icon" class="modal-icon">🧪</div>
+          <div id="modal-icon" class="modal-icon"><i class="fa-solid fa-vial"></i></div>
           <h3 id="modal-status" class="modal-title">STATUS</h3>
           <p id="modal-products" class="modal-products">Produto A + Produto B</p>
           <p id="modal-message" class="modal-message">Mensagem do resultado aqui...</p>
@@ -212,7 +206,7 @@
 
     <!-- Histórico renderizado pelo Flask -->
     <footer class="history-section">
-      <h2>📜 Histórico de Experiências Realizadas</h2>
+      <h2><i class="fa-solid fa-clock-rotate-left mr-2"></i>Histórico de Experiências Realizadas</h2>
       <ul id="history-list" class="history-list">
         {% for item in historico %}
         <li class="history-item">

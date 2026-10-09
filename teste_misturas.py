@@ -12,10 +12,10 @@ def client():
 # Matriz completa de testes conforme o projeto Alma Lavada
 # Formato: (produto1, produto2, status_esperado)
 CASOS_TESTE = [
-    # Categoria: PERIGOSO / NAO_PODE
-    ("agua_sanitaria", "vinagre", "NAO_PODE"),
-    ("agua_sanitaria", "desinfetante", "NAO_PODE"),
-    ("agua_sanitaria", "alcool", "NAO_PODE"),
+    # Categoria: PERIGOSO / NAO PODE
+    ("agua_sanitaria", "vinagre", "NAO PODE"),
+    ("agua_sanitaria", "desinfetante", "NAO PODE"),
+    ("agua_sanitaria", "alcool", "NAO PODE"),
 
     # Categoria: CUIDADO
     ("agua_sanitaria", "detergente", "CUIDADO"),

@@ -356,7 +356,7 @@ body {
   background-color: #475569;
 }
 
-.badge.nao_pode {
+.badge.NAO PODE {
   background-color: #991b1b;
 }
 
@@ -467,9 +467,9 @@ body {
 .modal-box.inibe .modal-title { color: #64748b; }
 .modal-box.inibe .modal-icon { color: #64748b; }
 
-.modal-box.nao_pode { border-top: 6px solid #dc2626; }
-.modal-box.nao_pode .modal-title { color: #dc2626; }
-.modal-box.nao_pode .modal-icon { color: #dc2626; }
+.modal-box.NAO PODE { border-top: 6px solid #dc2626; }
+.modal-box.NAO PODE .modal-title { color: #dc2626; }
+.modal-box.NAO PODE .modal-icon { color: #dc2626; }
 
 /* Responsividade para Ecrãs Menores */
 @media (max-width: 1024px) {

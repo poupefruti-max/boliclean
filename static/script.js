@@ -118,7 +118,7 @@ const STATUS_ICONS = {
   PODE: '<i class="fa-solid fa-circle-check" style="color: #16a34a;"></i>',
   CUIDADO: '<i class="fa-solid fa-triangle-exclamation" style="color: #d97706;"></i>',
   INIBE: '<i class="fa-solid fa-rotate-right" style="color: #64748b;"></i>',
-  NAO PODE: '<i class="fa-solid fa-circle-xmark" style="color: #dc2626;"></i>'
+  NAO_PODE: '<i class="fa-solid fa-circle-xmark" style="color: #dc2626;"></i>'
 };
 
 // Exibe o modal formatado

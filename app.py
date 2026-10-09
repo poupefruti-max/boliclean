@@ -404,7 +404,7 @@ def misturar():
     par = frozenset([p1, p2])
     
     resultado = REACOES.get(par, {
-        "status": "NAO_PODE",
+        "status": "NAO PODE",
         "mensagem": "Não pode misturar! Risco de reação química perigosa ou tóxica."
     })
 

@@ -211,7 +211,7 @@
         {% for item in historico %}
         <li class="history-item">
           <span><strong>{{ item[0] }}</strong> + <strong>{{ item[1] }}</strong> — <em>{{ item[3] }}</em></span>
-          <span class="badge {{ item[2]|lower }}">{{ item[2] }}</span>
+          <span class="badge {{ item[2]|replace(' ', '_')|lower }}">{{ item[2] }}</span>
         </li>
         {% endfor %}
       </ul>
